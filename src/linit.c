@@ -14,32 +14,50 @@
 
 
 #define linit_c
-#define LUA_LIB
 
 #include "lua.h"
 
 #include "lualib.h"
 #include "lauxlib.h"
 
+#include "lrotable.h"
 
 /*
 ** these libs are loaded by lua.c and are readily available to any Lua
 ** program
 */
 static const luaL_Reg loadedlibs[] = {
-  {"_G", luaopen_base},
+  // {"_G", luaopen_base},
+#if defined(COLORLCD)
   {LUA_LOADLIBNAME, luaopen_package},
-  {LUA_COLIBNAME, luaopen_coroutine},
-  {LUA_TABLIBNAME, luaopen_table},
+#endif
+  // {LUA_COLIBNAME, luaopen_coroutine},
+  // {LUA_TABLIBNAME, luaopen_table},
   {LUA_IOLIBNAME, luaopen_io},
-  {LUA_OSLIBNAME, luaopen_os},
-  {LUA_STRLIBNAME, luaopen_string},
-  {LUA_BITLIBNAME, luaopen_bit32},
-  {LUA_MATHLIBNAME, luaopen_math},
-  {LUA_DBLIBNAME, luaopen_debug},
+  // {LUA_OSLIBNAME, luaopen_os},
+  // {LUA_STRLIBNAME, luaopen_string},
+  // {LUA_BITLIBNAME, luaopen_bit32},
+  // {LUA_MATHLIBNAME, luaopen_math},
+  // {LUA_DBLIBNAME, luaopen_debug},
   {NULL, NULL}
 };
 
+/* The read-only tables are defined here */
+const luaR_table lua_rotable[] =
+{
+  {"__opentx", opentxLib, opentxConstants, edgetxStrings},
+  {"lcd", lcdLib, NULL, NULL},
+  {"model", modelLib, NULL, NULL},
+  {"__baselib", baselib, NULL, NULL},
+  {LUA_IOLIBNAME, iolib, NULL, NULL},
+  {LUA_STRLIBNAME, strlib, NULL, NULL},
+  {LUA_MATHLIBNAME, mathlib, mathlib_vals, NULL},
+  {LUA_BITLIBNAME, bitlib, NULL, NULL},
+#if defined(COLORLCD)
+  {LUA_TABLIBNAME, tab_funcs, NULL, NULL},
+#endif
+  {NULL, NULL, NULL, NULL}
+};
 
 /*
 ** these libs are preloaded and must be required before used
